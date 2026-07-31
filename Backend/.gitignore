@@ -2,7 +2,7 @@
 node_modules/
 
 # Variables de entorno
-
+package-lock.json
 
 #Uploads
 Uploads/
