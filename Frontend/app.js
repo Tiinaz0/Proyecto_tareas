@@ -23,7 +23,7 @@ const loginModal = document.getElementById('loginModal');
 const loginForm = document.getElementById('loginForm');
 const loginInput = document.getElementById('loginInput');
 
-// 2.2 CONTROLADOR ASINCRONO DEL MODAL DE NOTIFICACIONES
+// 2.2 CONTROLADOR ASÍNCRONO DEL MODAL DE NOTIFICACIONES
 function openCustomModal(title, message, isConfirm = false, onConfirmCallback = null) {
   modalTitle.textContent = title;
   modalMessage.textContent = message;
@@ -40,13 +40,13 @@ function openCustomModal(title, message, isConfirm = false, onConfirmCallback = 
     customModal.classList.remove('active');
     if (onConfirmCallback) onConfirmCallback();
   });
-
-  nuevoCancelBtn.addEventListener('click', () => {
+  
+nuevoCancelBtn.addEventListener('click', () => {
     customModal.classList.remove('active');
   });
 }
 
-// 3. GUARDIA DE AUTENTICACIÓN (Manipulacion de modales de flujoo)
+// 3. GUARDIA DE AUTENTICACIÓN (Manipulación de Modales de flujo)
 function checkAuth() {
   if (!AUTHOR) {
     loginModal.classList.add('active');
@@ -61,7 +61,7 @@ function checkAuth() {
 loginForm.addEventListener('submit', (e) => {
   e.preventDefault();
   const name = loginInput.value.trim();
-  
+
   if (name && name.length >= 2) {
     AUTHOR = name;
     localStorage.setItem('todo_author_session', AUTHOR);
@@ -78,7 +78,7 @@ async function fetchTasks() {
   try {
     const response = await fetch(API_URL);
     const json = await response.json();
-    
+
     if (json.status === 'success' && json.data.tasks) {
       renderTasks(json.data.tasks);
     }
@@ -91,7 +91,6 @@ async function fetchTasks() {
 // 5. PINTAR LAS TARJETAS DINÁMICAMENTE
 function renderTasks(tasks) {
   tasksContainer.innerHTML = '';
-
   if (tasks.length === 0) {
     tasksContainer.innerHTML = '<p class="empty">No hay tareas pendientes en la base de datos.</p>';
     return;
@@ -100,7 +99,7 @@ function renderTasks(tasks) {
   tasks.forEach(task => {
     const taskCard = document.createElement('div');
     taskCard.className = `task-card ${task.is_completed ? 'completed' : ''}`;
-    
+
     const setHtmlModoLectura = () => {
       taskCard.innerHTML = `
         <div class="task-info">
@@ -109,8 +108,8 @@ function renderTasks(tasks) {
           <span class="author">Autor: ${task.author}</span>
         </div>
         <div class="task-actions" style="display: flex; gap: 5px;">
-          <button class="btn-edit" style="background-color: #2563eb; font-size: 0.85rem; width: auto; padding: 5px 10px; color: white; border: none; border-radius: 4px; cursor: pointer;">Editar</button>
-          <button class="btn-delete" style="background-color: #dc2626; font-size: 0.85rem; width: auto; padding: 5px 10px; color: white; border: none; border-radius: 4px; cursor: pointer;">Eliminar</button>
+          <button class="btn-edit" style="background-color: #2563eb; font-size: 0.85rem;">Editar</button>
+          <button class="btn-delete" style="background-color: #dc2626; font-size: 0.85rem;">Eliminar</button>
         </div>
       `;
 
@@ -123,20 +122,20 @@ function renderTasks(tasks) {
   });
 }
 
-// 5.1 INTERFAZ DINAMICA: Modo edicion inline
+// 5.1 INTERFAZ DINÁMICA: MODO EDICIÓN INLINE
 function cambiarAModoEdicion(task, taskCard) {
   if (AUTHOR !== task.author) {
-    openCustomModal('Acceso Restringido', `¡No autorizado! Esta tarea le pertenece a "${task.author}" y tú eres "${AUTHOR}"`, false);
+    openCustomModal('Acceso Restringido', `¡No autorizado! Esta tarea le pertenece a "${task.author}"`, false);
     return;
   }
 
   taskCard.innerHTML = `
     <div class="task-edit-form" style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
       <input type="text" class="edit-title" value="${task.title}" style="padding: 5px; border: 1px solid #2563eb; border-radius: 4px;">
-      <textarea class="edit-desc" style="padding: 5px; border: 1px solid #2563eb; border-radius: 4px; resize: none;">${task.description || ''}</textarea>
+      <textarea class="edit-desc" style="padding: 5px; border: 1px solid #2563eb; border-radius: 4px;">${task.description || ''}</textarea>
       <div style="display: flex; gap: 5px; justify-content: flex-end;">
-        <button class="btn-cancel-edit" style="background-color: #6b7280; font-size: 0.85rem; width: auto; padding: 5px 10px; color: white; border: none; border-radius: 4px; cursor: pointer;">Cancelar</button>
-        <button class="btn-save-edit" style="background-color: #10b981; font-size: 0.85rem; width: auto; padding: 5px 10px; color: white; border: none; border-radius: 4px; cursor: pointer;">Guardar</button>
+        <button class="btn-cancel-edit" style="background-color: #6b7280; font-size: 0.85rem;">Cancelar</button>
+        <button class="btn-save-edit" style="background-color: #10b981; font-size: 0.85rem;">Guardar</button>
       </div>
     </div>
   `;
@@ -149,12 +148,12 @@ function cambiarAModoEdicion(task, taskCard) {
   btnGuardar.addEventListener('click', () => {
     const nuevoTitulo = taskCard.querySelector('.edit-title').value.trim();
     const nuevaDescripcion = taskCard.querySelector('.edit-desc').value.trim();
-    
+
     if (!nuevoTitulo) {
-      openCustomModal('Validación', 'El título de la tarea es obligatorio.', false);
+      openCustomModal('Validación', 'El titulo de la tarea es obligatorio.', false);
       return;
     }
-    
+
     updateTask(task.id, nuevoTitulo, nuevaDescripcion, task.is_completed);
   });
 }
@@ -196,7 +195,7 @@ async function updateTask(id, title, description, is_completed) {
     if (response.ok && json.status === 'success') {
       fetchTasks();
     } else {
-      openCustomModal('Error de Servidor', json.message || 'Error al actualizar en el servidor', false);
+      openCustomModal('Error de Servidor', json.message || 'Error al actualizar en el servidor.', false);
     }
   } catch (error) {
     openCustomModal('Error de Red', 'Error al comunicar la actualización.', false);
@@ -227,7 +226,7 @@ async function deleteTask(id, taskAuthor) {
         if (response.ok && json.status === 'success') {
           fetchTasks();
         } else {
-          openCustomModal('Error de Servidor', json.message || 'Fallo de autorización en el servidor', false);
+          openCustomModal('Error de Servidor', json.message || 'Fallo de autorización en el servidor.', false);
         }
       } catch (error) {
         openCustomModal('Error de Red', 'Error de red al eliminar la tarea.', false);
@@ -236,7 +235,7 @@ async function deleteTask(id, taskAuthor) {
   );
 }
 
-// 9. CERRAR SESION (LOGOUT)
+// 9. CERRAR SESIÓN (LOGOUT)
 logoutBtn.addEventListener('click', () => {
   localStorage.removeItem('todo_author_session');
   window.location.reload();

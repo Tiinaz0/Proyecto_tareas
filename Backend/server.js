@@ -101,7 +101,7 @@ const server = http.createServer(async (req, res) => {
       try {
         const { title, description, is_completed, author } = JSON.parse(body);
 
-        // 1. Validar si la tarea existe en la base de datos todo_db
+        // 1. Validar si la tarea existe en la base de datos todo db
         const [rows] = await pool.query('SELECT author FROM tasks WHERE id = ?', [taskId]);
 
         if (rows.length === 0) {
@@ -144,7 +144,7 @@ const server = http.createServer(async (req, res) => {
       try {
         const { author } = JSON.parse(body);
 
-        // Paso A: Consultar a MySQL si la tarea existe y quién es el dueño
+        // Paso A: Consultar a MySQL si la tarea existe y quien es el dueño
         const [rows] = await pool.query('SELECT author FROM tasks WHERE id = ?', [taskId]);
 
         if (rows.length === 0) {
@@ -155,14 +155,14 @@ const server = http.createServer(async (req, res) => {
 
         const task = rows[0];
 
-        // Lógica de protección: Comparamos el autor del JSON con el autor de la fila de MySQL
+        // Logica de protección: Comparamos el autor del JSON con el autor de la fila de MySQL
         if (task.author !== author) {
           res.writeHead(403, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ status: 'error', message: `No autorizado. La tarea le pertenece a ${task.author}` }));
           return;
         }
 
-        // Paso B: Si pasa el filtro, ejecutamos el borrado físico en la tabla
+        // Paso B: Si pasa el filtro ejecutamos el borrado físico en la tabla
         await pool.query('DELETE FROM tasks WHERE id = ?', [taskId]);
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
